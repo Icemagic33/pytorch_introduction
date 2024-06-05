@@ -35,16 +35,21 @@ class AlexNet(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.features(x)
+        print(x.shape)  # torch.Size([64, 256, 1, 1])
         x = self.avgpool(x)
+        print(x.shape)  # torch.Size([64, 256, 6, 6])
         x = torch.flatten(x, 1)
+        print(x.shape)  # torch.Size([64, 9216])
         x = self.classifier(x)
+        print(x.shape)  # torch.Size([64, 1000])
         return x
 
 
 model = AlexNet()
 x = torch.randn(64, 3, 227, 227)
-print(x)
-print(x.shape)  # torch.Size([64, 3, 227, 227])
-print(model(x).shape)  # torch.Size([64, 1000])
-print(model(x))
-exit()
+new_x = model(x)
+# print(x)
+# print(x.shape)  # torch.Size([64, 3, 227, 227])
+# print(model(x).shape)  # torch.Size([64, 1000])
+# print(model(x))
+# exit()
