@@ -39,3 +39,10 @@ class AlexNet(nn.Module):
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
+
+
+model = AlexNet()
+x = torch.randn(64, 3, 227, 227)
+print(x.shape)  # torch.Size([64, 3, 227, 227])
+print(model(x).shape)  # torch.Size([64, 1000])
+exit()
