@@ -29,3 +29,9 @@ class NN(nn.Module):
 model = NN(784, 10)
 x = torch.randn(64, 784)
 print(model(x).shape)
+
+
+# Create Convoluted Neural Network
+class CNN(nn.Module):
+    def __init__(self, in_channels=1, ):
+        super(CNN, self).__init__()
