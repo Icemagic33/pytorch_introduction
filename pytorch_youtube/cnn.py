@@ -80,3 +80,23 @@ class CNN(nn.Module):
 # print(x.shape) # torch.Size([64, 1, 28, 28])
 # print(model(x).shape) # torch.Size([64, 10])
 # exit()
+
+# Set device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Hyperparameters
+in_channels = 1
+num_classes = 10
+learning_rate = 0.001
+batch_size = 64
+num_epochs = 1
+
+# Load Data
+train_dataset = datasets.MNIST(
+    root='dataset/', train=True, transform=transforms.ToTensor(), download=True)
+train_loader = DataLoader(dataset=train_dataset,
+                          batch_size=batch_size, shuffle=True)
+test_dataset = datasets.MNIST(
+    root='dataset/', train=False, transform=transforms.ToTensor(), download=True)
+test_loader = DataLoader(dataset=test_dataset,
+                         batch_size=batch_size, shuffle=True)
