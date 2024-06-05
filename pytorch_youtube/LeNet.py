@@ -8,7 +8,7 @@ import torch.nn as nn
 
 
 class LeNet(nn.Module):
-    def __init__(self, in_channels, num_classes=10):
+    def __init__(self):
         super(LeNet, self).__init__()
         self.relu = nn.ReLU()
         self.c1 = nn.Conv2d(in_channels=1, out_channels=6, kernel_size=(
@@ -34,22 +34,26 @@ class LeNet(nn.Module):
         return x
 
 
-# Set device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+x = torch.randn(64, 1, 32, 32)
+model = LeNet()
+print(model(x).shape)
 
-# Hyperparameters
-in_channels = 1
-num_classes = 10
-learning_rate = 0.001
-batch_size = 64
-num_epochs = 5
+# # Set device
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# Load Data
-train_dataset = datasets.MNIST(
-    root='dataset/', train=True, transform=transforms.ToTensor(), download=True)
-train_loader = DataLoader(dataset=train_dataset,
-                          batch_size=batch_size, shuffle=True)
-test_dataset = datasets.MNIST(
-    root='dataset/', train=False, transform=transforms.ToTensor(), download=True)
-test_loader = DataLoader(dataset=test_dataset,
-                         batch_size=batch_size, shuffle=True)
+# # Hyperparameters
+# in_channels = 1
+# num_classes = 10
+# learning_rate = 0.001
+# batch_size = 64
+# num_epochs = 5
+
+# # Load Data
+# train_dataset = datasets.MNIST(
+#     root='dataset/', train=True, transform=transforms.ToTensor(), download=True)
+# train_loader = DataLoader(dataset=train_dataset,
+#                           batch_size=batch_size, shuffle=True)
+# test_dataset = datasets.MNIST(
+#     root='dataset/', train=False, transform=transforms.ToTensor(), download=True)
+# test_loader = DataLoader(dataset=test_dataset,
+#                          batch_size=batch_size, shuffle=True)
