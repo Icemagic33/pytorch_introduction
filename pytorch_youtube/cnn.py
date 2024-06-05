@@ -60,3 +60,5 @@ class CNN(nn.Module):
 			return_indices: bool = False,
 			ceil_mode: bool = False
 		)'''
+        self.conv2 = nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(
+            3, 3), stride=(1, 1), padding=(1, 1))
