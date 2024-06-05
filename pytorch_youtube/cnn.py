@@ -51,3 +51,12 @@ class CNN(nn.Module):
 			dtype: Any | None = None
 		)
 		'''
+        self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
+        '''class MaxPool2d(
+			kernel_size: _size_any_t,
+			stride: _size_any_t | None = None,
+			padding: _size_any_t = 0,
+			dilation: _size_any_t = 1,
+			return_indices: bool = False,
+			ceil_mode: bool = False
+		)'''
