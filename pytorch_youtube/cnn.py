@@ -101,10 +101,30 @@ test_dataset = datasets.MNIST(
 test_loader = DataLoader(dataset=test_dataset,
                          batch_size=batch_size, shuffle=True)
 
-# Initiate network
+# Initiate Network
 # model = CNN(in_channels=in_channels, num_classes=num_classes).to(device)
 model = CNN().to(device)  # already set the parameters by default
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# Train Network
+for epoch in range(num_epochs):
+    for batch_idx, (data, targets) in enumerate(train_loader):
+        # Get data to cuda if possible
+        data = data.to(device=device)
+        targets = targets.to(device=device)
+
+        # forward
+        scores = model(data)
+        loss = criterion(scores, targets)
+
+        # backward
+        optimizer.zero_grad()
+        loss.backward()
+
+        # gradient descent or adam step
+        optimizer.step()  # we are using adam here
+
+# Check accuracy on training & test to see how good our model works
