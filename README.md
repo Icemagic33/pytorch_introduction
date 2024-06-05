@@ -30,8 +30,15 @@ Welcome to the PyTorch Introduction repository. This repository contains various
 To clone the repository and start exploring the content, use the following commands:
 
 ```bash
-git clone https://github.com/yourusername/pytorch_introduction.git
+git clone https://github.com/icemagic33/pytorch_introduction.git
 cd pytorch_introduction
+```
+
+## Contributions
+Contributions are welcome! Feel free to submit a pull request or open an issue for any suggestions or improvements.
+
+
+
 
 
 ## Contributions
