@@ -51,6 +51,7 @@ class CNN(nn.Module):
             dtype: Any | None = None
         )
         '''
+        # Use max pool
         self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
         '''class MaxPool2d(
             kernel_size: _size_any_t,
@@ -68,7 +69,7 @@ class CNN(nn.Module):
         x = F.relu(self.conv1(x))
         x = self.pool(x)
         x = F.relu(self.conv2(x))
-        # Flatten all dimensions except the batch dimension
-        x = torch.flatten(x, 1)
+        x = self.pool(x)
+        x = x.reshape(x.shape[0], -1)
         x = self.fc1(x)
         return x
