@@ -28,9 +28,9 @@ class NN(nn.Module):
 
 # Create Convoluted Neural Network
 class CNN(nn.Module):
-    def __init__(self, in_channels=1, out_channels=10):  # if rgb image -> in_channels=3
+    def __init__(self, in_channels=1, num_classes=10):  # if rgb image -> in_channels=3
         # Since we are working with MNIST dataset
-        # in_channels=1, out+channels=10 because 0~9
+        # in_channels=1, num_classes=10 because 0~9
         super(CNN, self).__init__()
         # First CNN channel
         # same convolution : preserves the dimension (doesn't reduce size)
@@ -60,5 +60,6 @@ class CNN(nn.Module):
 			return_indices: bool = False,
 			ceil_mode: bool = False
 		)'''
-        self.conv2 = nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(
+        self.conv2 = nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(
             3, 3), stride=(1, 1), padding=(1, 1))
+        self.fc1 = nn.Linear(16*7*7, num_classes)
