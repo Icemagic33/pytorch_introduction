@@ -73,3 +73,10 @@ class CNN(nn.Module):
         x = x.reshape(x.shape[0], -1)
         x = self.fc1(x)
         return x
+
+
+# model = CNN()
+# x = torch.randn(64, 1, 28, 28)
+# print(x.shape) # torch.Size([64, 1, 28, 28])
+# print(model(x).shape) # torch.Size([64, 10])
+# exit()
