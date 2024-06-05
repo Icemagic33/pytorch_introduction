@@ -26,12 +26,28 @@ class NN(nn.Module):
         return x
 
 
-model = NN(784, 10)
-x = torch.randn(64, 784)
-print(model(x).shape)
-
-
 # Create Convoluted Neural Network
 class CNN(nn.Module):
-    def __init__(self, in_channels=1, ):
+    def __init__(self, in_channels=1, out_channels=10):  # if rgb image -> in_channels=3
+        # Since we are working with MNIST dataset
+        # in_channels=1, out+channels=10 because 0~9
         super(CNN, self).__init__()
+        # First CNN channel
+        # same convolution : preserves the dimension (doesn't reduce size)
+        # n_out = {(n_in + 2*padding - kernel)/stride} + 1
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(
+            3, 3), stride=(1, 1), padding=(1, 1))
+        '''class Conv2d(
+			in_channels: int,
+			out_channels: int,
+			kernel_size: _size_2_t,
+			stride: _size_2_t = 1,
+			padding: _size_2_t | str = 0,
+			dilation: _size_2_t = 1,
+			groups: int = 1,
+			bias: bool = True,
+			padding_mode: str = 'zeros',
+			device: Any | None = None,
+			dtype: Any | None = None
+		)
+		'''
