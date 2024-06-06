@@ -50,3 +50,11 @@ class VGG_16(nn.Module):
 
         # unpacking all layers and create an intire block of these layers
         return nn.Sequential(*layers)
+
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = VGG_16(in_channels=3, num_classes=1000).to(device)
+# input image is fixed as a 244x244 RGB image
+x = torch.randn(1, 3, 244, 244).to(device)
+print(x.shape)  # torch.Size([1, 3, 244, 244])
+print(model(x).shape)  # torch.Size([1, 1000])
