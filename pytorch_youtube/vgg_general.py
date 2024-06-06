@@ -8,16 +8,25 @@ import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 
 # VGG16 Architecture summary
-VGG16 = [64, 64, 'M', 128, 128, 'M', 256, 256, 256,
-         'M', 512, 512, 512, 'M', 512, 512, 512, 'M']
+VGG_types = {
+    'VGG11': [64, 'M', 128, 'M', 256, 256,
+              'M', 512, 512, 'M', 512, 512, 'M'],
+    'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256,
+              'M', 512, 512, 'M', 512, 512, 'M'],
+    'VGG16': [64, 64, 'M', 128, 128, 'M', 256, 256, 256,
+              'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
+    'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256,
+              'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
+}
 # then, flatten and 4096x4096x1000 linear layers
 
 
-class VGG_16(nn.Module):
+class VGG_net(nn.Module):
     def __init__(self, in_channels=3, num_classes=1000):
-        super(VGG_16, self).__init__()
+        super(VGG_net, self).__init__()
         self.in_channels = in_channels
-        self.conv_layers = self.create_conv_layers(VGG16)
+        self.conv_layers = self.create_conv_layers(
+            VGG_types['VGG19'])  # change the VGG type here
         self.fc = nn.Sequential(  # make more compact
             nn.Linear(in_features=512*7*7, out_features=4096),
             nn.ReLU(),
@@ -53,7 +62,7 @@ class VGG_16(nn.Module):
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model = VGG_16(in_channels=3, num_classes=1000).to(device)
+model = VGG_net(in_channels=3, num_classes=1000).to(device)
 # input image is fixed as a 244x244 RGB image
 x = torch.randn(1, 3, 244, 244).to(device)
 print(x.shape)  # torch.Size([1, 3, 244, 244])
