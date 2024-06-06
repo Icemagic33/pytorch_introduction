@@ -14,5 +14,21 @@ VGG16 = [64, 64, 'M', 128, 128, 'M', 256, 256, 256,
 
 
 class VGG_16(nn.Module):
-    def __init__(self, in_channels, num_classes):
+    def __init__(self, in_channels=3, num_classes=1000):
         super(VGG_16, self).__init__()
+        self.in_channels = in_channels
+        self.conv_layers = create_conv_layers(VGG16)
+
+    def forward(self, x):
+            pass
+
+	def create_conv_layers(self, architecture):
+            layers = []
+        	in_channels = self.in_channels
+        
+			for x in architecture:
+                        if type(x) == int:
+						out_channels = x
+                
+        
+              
