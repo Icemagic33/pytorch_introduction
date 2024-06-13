@@ -54,3 +54,13 @@ class TransformerBlock(nn.Module):
     def __init__(self, embed_size, heads, dropout, forward_expansion):
         super(TransformerBlock, self).__init__()
         self.attention = SelfAttention(embed_size, heads)
+        self.norm1 = nn.LayerNorm(embed_size)
+        self.norm1 = nn.LayerNorm(embed_size)
+
+        self.feed_forawrd = nn.Sequential(
+            nn.Linear(embed_size, forward_expansion*embed_size),
+            nn.ReLU(),
+            nn.Linear(forward_expansion*embed_size, embed_size),
+        )
+
+        self.dropout = nn.Dropout(dropout)
