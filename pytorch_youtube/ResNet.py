@@ -57,12 +57,19 @@ class ResNet(nn.Module):
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         # ResNet layers
-        # self.layer1 = ...
-        # self.layer2 = ...
+        self.layer1 = self._make_layer(
+            block, layers[0], out_channel=64, stride=1)
+        self.layer2 = self._make_layer(
+            block, layers[1], out_channel=128, stride=2)
+        self.layer3 = self._make_layer(
+            block, layers[2], out_channel=256, stride=2)
+        self.layer4 = self._make_layer(
+            block, layers[3], out_channel=512, stride=2)
+
+        self.avgpool = nn.AdaptiveAvgPool2d(())
+
 
 # stride is 2 except for conv2_x (it is 1)
-
-
 def _make_layer(self, block, num_residual_blocks, out_channels, stride):
     identity_downsample = None
     layers = []
