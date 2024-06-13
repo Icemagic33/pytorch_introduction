@@ -105,3 +105,13 @@ class Encoder(nn.Module):
 
     def forward(self, x, mask):
         N, seq_length = x.shape
+        positions = torch.arange(0, seq_length).expand(
+            N, seq_length).to(self.device)
+
+        out = self.dropout(self.word_embedding(x) +
+                           self.position_embedding(positions))
+
+        for layer in self.layers:
+            out = layer(out, out, out, mask)
+
+        return out
