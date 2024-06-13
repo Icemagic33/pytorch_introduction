@@ -82,8 +82,26 @@ class Encoder(nn.Module):
         heads,
         device,
         forward_expansion,
-        dropour,
+        dropout,
         max_length,
     ):
         super(Encoder, self).__init__()
         self.embed_size = embed_size
+        self.device = device
+        self.word_embedding = nn.Embedding(src_vocab_size, embed_size)
+        self.position_embedding = nn.Embedding(max_length, embed_size)
+
+        self.layers = nn.Sequential(
+            [
+                TransformerBlock(
+                    embed_size,
+                    heads,
+                    dropout=dropout,
+                    forward_expansion=forward_expansion
+                )
+            ]
+        )
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x, mask):
+        N, seq_length = x.shape
