@@ -21,6 +21,26 @@ class GoogLeNet(nn.Module):
         self.maxpool2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         # In this order: in_channels, out_1x1, red_3x3, out_3x3, red_5x5, out_5x5, out_1x1pool
+        # Check numbers from the table in the paper
+        self.inception3a = Inception_block(192, 64, 96, 128, 16, 32, 32)
+        self.inception3b = Inception_block(256, 128, 128, 192, 32, 96, 64)
+
+        self.maxpool3 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        self.inception4a = Inception_block(480, 192, 96, 208, 16, 48, 64)
+        self.inception4b = Inception_block(512, 160, 112, 224, 24, 64, 64)
+        self.inception4c = Inception_block(512, 128, 128, 2256, 24, 64)
+        self.inception4d = Inception_block(512, 112, 144, 288, 32, 64, 64)
+        self.inception4e = Inception_block(528, 256, 160, 320, 32, 128, 128)
+
+        self.maxpool4 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        self.inception5a = Inception_block(832, 256, 160, 320, 32, 128, 128)
+        self.inception5b = Inception_block(832, 384, 192, 384, 48, 128, 128)
+
+        self.avgpool = nn.AvgPool2d(kernel_size=7, stride=1)
+        self.dropout = nn.Dropout(p=0.4)
+        self.fc1 = nn.Linear(1024, 1000)
 
 
 class Inception_block(nn.Module):
