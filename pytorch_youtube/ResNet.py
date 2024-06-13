@@ -7,10 +7,10 @@ import torch.nn as nn
 # So, in theory, increasing the depth never worsens the performance.
 
 
-class resnet_layers(nn.Module):
-    def __init__(self, in_channels, out_channels, **kwargs):     # key word arguments
-        super(resnet_layers, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=112, kernel_size=(
+class block(nn.Module):
+    def __init__(self, in_channels, out_channels, **kwargs):
+        super(block, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=64, out_channels=112, kernel_size=(
             7, 7), stride=2, padding=3)
         self.maxpool1 = nn.MaxPool2d(kernel_size=(3, 3), stride=2, padding=1)
         self.conv2_x = nn.Sequential(
@@ -27,7 +27,7 @@ class resnet_layers(nn.Module):
             nn.Conv2d(in_channels=56, out_channels=56,
                       kernel_size=(1, 1), stride=1, padding=1),
             nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
+                      kernel_size=(1, 1), stride=2, padding=1),
         )
         self.conv4_x = nn.Sequential(
             nn.Conv2d(in_channels=112, out_channels=56,
@@ -35,7 +35,7 @@ class resnet_layers(nn.Module):
             nn.Conv2d(in_channels=56, out_channels=56,
                       kernel_size=(1, 1), stride=1, padding=1),
             nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
+                      kernel_size=(1, 1), stride=2, padding=1),
         )
         self.conv5_x = nn.Sequential(
             nn.Conv2d(in_channels=112, out_channels=56,
@@ -43,7 +43,7 @@ class resnet_layers(nn.Module):
             nn.Conv2d(in_channels=56, out_channels=56,
                       kernel_size=(1, 1), stride=1, padding=1),
             nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
+                      kernel_size=(1, 1), stride=2, padding=1),
         )
 
     def forward(self, x):
