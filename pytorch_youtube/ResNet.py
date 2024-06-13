@@ -109,3 +109,15 @@ def _make_layer(self, block, num_residual_blocks, out_channels, stride):
         layers.append(block(self.in_channels, out_channels))
 
     return nn.Sequential(*layers)
+
+
+def ResNet50(img_channels=3, num_classes=1000):
+    return ResNet(block, [3, 4, 6, 3], img_channels, num_classes)
+
+
+def ResNet101(img_channels=3, num_classes=1000):
+    return ResNet(block, [3, 4, 23, 3], img_channels, num_classes)
+
+
+def ResNet152(img_channels=3, num_classes=1000):
+    return ResNet(block, [3, 8, 36, 3], img_channels, num_classes)
