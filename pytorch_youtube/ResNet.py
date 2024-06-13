@@ -74,3 +74,9 @@ def _make_layer(self, block, num_residual_blocks, out_channels, stride):
 
     layers.append(block(self.in_channels, out_channels,
                   identity_downsample, stride))
+    self.in_channels = out_channels*4
+
+    for i in range(num_residual_blocks - 1):
+        layers.append(block(self.in_channels, out_channels))
+
+    return nn.Sequential(*layers)
