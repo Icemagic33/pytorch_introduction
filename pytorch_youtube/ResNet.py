@@ -41,3 +41,19 @@ class block(nn.Module):
         x += identity
         x = self.relu(x)
         return x
+
+
+class ResNet(nn.Module):
+    def __init__(self, block, layers, image_channels, num_classes):
+        # For ResNet-50: layers = [3, 4, 6, 3]
+        # image_channels = 3 for RGB, or 1 for MNIST, ...
+        # num_classes -> depending on the data we have
+        super(ResNet, self).__init__()
+        self.in_channels = 64
+        self.conv1 = nn.Conv2d(
+            image_channels, 64, kernel_size=7, stride=2, padding=3)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU()
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        # ResNet layers
