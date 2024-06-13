@@ -3,6 +3,8 @@ import torch.nn as nn
 
 # 1st place in ILSVRC 2015 classification task
 # Problem: Adding more layers to a suitably deep model leads to higher training error
+# It chooses waht it wants to learn -> It can learn new things, but it never forgets what it has learned before
+# So, in theory, increasing the depth never worsens the performance.
 
 
 class conv_block(nn.Module):
