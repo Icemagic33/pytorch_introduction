@@ -102,3 +102,9 @@ class conv_block(nn.Module):
 
     def forward(self, x):
         return self.relu(self.batchnorm(self.conv(x)))
+
+
+if __name__ == '__main__':
+    x = torch.randn(30, 3, 224, 224)
+    model = GoogLeNet()
+    print(model(x).shape)
