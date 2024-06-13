@@ -48,3 +48,9 @@ class SelfAttention(nn.Module):
 
         out = self.fc_out(out)
         return out
+
+
+class TransformerBlock(nn.Module):
+    def __init__(self, embed_size, heads, dropout, forward_expansion):
+        super(TransformerBlock, self).__init__()
+        self.attention = SelfAttention(embed_size, heads)
