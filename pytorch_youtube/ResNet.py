@@ -66,7 +66,25 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(
             block, layers[3], out_channel=512, stride=2)
 
-        self.avgpool = nn.AdaptiveAvgPool2d(())
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512*4, num_classes)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        x = self.avgpool(x)
+        x = x.reshape(x.shape[0], -1)
+        x = self.fc(x)
+
+        return x
 
 
 # stride is 2 except for conv2_x (it is 1)
