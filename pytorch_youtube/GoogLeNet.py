@@ -27,6 +27,11 @@ class Inception_block(nn.Module):
             conv_block(in_channels, out_1x1, kernel_size=1)
         )
 
+    def forward(self, x):
+        # N x filters x 28 x 28
+        # Dimension of the concatenation is 1D
+        return torch.cat([self.branch1(x), self.branch2(x), self.branch3(x), self.branch4(x)], 1)
+
 
 class conv_block(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):     # key word arguments
