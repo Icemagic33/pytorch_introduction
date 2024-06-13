@@ -8,43 +8,18 @@ import torch.nn as nn
 
 
 class block(nn.Module):
-    def __init__(self, in_channels, out_channels, **kwargs):
+    def __init__(self, in_channels, out_channels, identity_downsample=None, stride=1):
         super(block, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=64, out_channels=112, kernel_size=(
-            7, 7), stride=2, padding=3)
-        self.maxpool1 = nn.MaxPool2d(kernel_size=(3, 3), stride=2, padding=1)
-        self.conv2_x = nn.Sequential(
-            nn.Conv2d(in_channels=112, out_channels=64,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=64, out_channels=64,
-                      kernel_size=(3, 3), stride=1, padding=1),
-            nn.Conv2d(in_channels=64, out_channels=256,
-                      kernel_size=(1, 1), stride=1, padding=1),
-        )
-        self.conv3_x = nn.Sequential(
-            nn.Conv2d(in_channels=112, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=2, padding=1),
-        )
-        self.conv4_x = nn.Sequential(
-            nn.Conv2d(in_channels=112, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=2, padding=1),
-        )
-        self.conv5_x = nn.Sequential(
-            nn.Conv2d(in_channels=112, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=56, out_channels=56,
-                      kernel_size=(1, 1), stride=2, padding=1),
-        )
+        self.expansion = 4
 
-    def forward(self, x):
-        return self.relu(self.batchnorm(self.conv(x)))
+        self.conv1 = nn.Conv2d(in_channels, out_channels,
+                               kernel_size=1, stride=1, padding=0)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels,
+                               kernel_size=3, stride=stride, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.conv3 = nn.Conv2d(
+            out_channels, out_channels*self.expansion, kernel_size=1, stride=1, padding=0)
+        self.bn3 = nn.BatchNorm2d(out_channels*self.expansion)
+        self.relu = nn.ReLU()
+        self.identity_downsample = identity_downsample
