@@ -7,23 +7,28 @@ import torch.nn as nn
 # So, in theory, increasing the depth never worsens the performance.
 
 
-class conv_block(nn.Module):
+class resnet_layers(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):     # key word arguments
-        super(conv_block, self).__init__()
+        super(resnet_layers, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=112, kernel_size=(
+            7, 7), stride=2, padding=3)
+        self.maxpool1 = nn.MaxPool2d(kernel_size=(3, 3), stride=2, padding=1)
         self.conv2_x = nn.Sequential(
-            nn.MaxPool2d(kernel_size=(3, 3), stride=2, padding=1),
-            nn.Conv2d(in_channels=in_channels, out_channel=50,
+            nn.Conv2d(in_channels=112, out_channels=64,
                       kernel_size=(1, 1), stride=1, padding=1),
-            nn.Conv2d(in_channels=50, out_channel=64,
+            nn.Conv2d(in_channels=64, out_channels=64,
                       kernel_size=(3, 3), stride=1, padding=1),
-            nn.Conv2d(in_channels=64, out_channel=256,
+            nn.Conv2d(in_channels=64, out_channels=256,
                       kernel_size=(1, 1), stride=1, padding=1),
         )
-        self.conv1 = nn.Conv2d()
-        # kernel_size = (1,1), (3,3), (5,5)
-        self.conv2 = nn.Conv2d(in_channels, out_channels, **kwargs)
-        # not in the paper (wasn't invented yet), but increases performance
-        self.conv3 = nn.Conv2d(in_channels, out_channels, **kwargs)
+        self.conv3_x = nn.Sequential(
+            nn.Conv2d(in_channels=112, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+            nn.Conv2d(in_channels=56, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+            nn.Conv2d(in_channels=56, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+        )
 
     def forward(self, x):
         return self.relu(self.batchnorm(self.conv(x)))
