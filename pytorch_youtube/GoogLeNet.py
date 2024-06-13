@@ -29,7 +29,7 @@ class GoogLeNet(nn.Module):
 
         self.inception4a = Inception_block(480, 192, 96, 208, 16, 48, 64)
         self.inception4b = Inception_block(512, 160, 112, 224, 24, 64, 64)
-        self.inception4c = Inception_block(512, 128, 128, 2256, 24, 64)
+        self.inception4c = Inception_block(512, 128, 128, 256, 24, 64, 64)
         self.inception4d = Inception_block(512, 112, 144, 288, 32, 64, 64)
         self.inception4e = Inception_block(528, 256, 160, 320, 32, 128, 128)
 
@@ -107,4 +107,4 @@ class conv_block(nn.Module):
 if __name__ == '__main__':
     x = torch.randn(30, 3, 224, 224)
     model = GoogLeNet()
-    print(model(x).shape)
+    print(model(x).shape)  # torch.Size([30, 1000])
