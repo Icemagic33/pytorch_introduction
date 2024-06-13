@@ -127,7 +127,7 @@ def test():
     x = torch.randn(16, 3, 244, 244)
     # y = net(x).to('cuda')
     y = net(x)
-    print(y.shape)
+    print(y.shape)  # torch.Size([16, 1000])
 
 
-print(test())
+test()
