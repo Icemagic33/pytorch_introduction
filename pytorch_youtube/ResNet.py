@@ -57,3 +57,20 @@ class ResNet(nn.Module):
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         # ResNet layers
+        # self.layer1 = ...
+        # self.layer2 = ...
+
+
+# stride is 2 except for conv2_x (it is 1)
+def _make_layer(self, block, num_residual_blocks, out_channels, stride):
+    identity_downsample = None
+    layers = []
+
+    if stride != 1 or self.in_channels != out_channels * 4:
+        identity_downsample = nn.Sequential(
+            nn.Conv2d(self.in_channels, out_channels *
+                      4, kernel_size=1, stride=stride),
+            nn.BatchNorm2d(out_channels*4))
+
+    layers.append(block(self.in_channels, out_channels,
+                  identity_downsample, stride))
