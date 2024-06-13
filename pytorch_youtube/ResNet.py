@@ -58,13 +58,13 @@ class ResNet(nn.Module):
 
         # ResNet layers
         self.layer1 = self._make_layer(
-            block, layers[0], out_channel=64, stride=1)
+            block, layers[0], out_channels=64, stride=1)
         self.layer2 = self._make_layer(
-            block, layers[1], out_channel=128, stride=2)
+            block, layers[1], out_channels=128, stride=2)
         self.layer3 = self._make_layer(
-            block, layers[2], out_channel=256, stride=2)
+            block, layers[2], out_channels=256, stride=2)
         self.layer4 = self._make_layer(
-            block, layers[3], out_channel=512, stride=2)
+            block, layers[3], out_channels=512, stride=2)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512*4, num_classes)
@@ -86,29 +86,28 @@ class ResNet(nn.Module):
 
         return x
 
+    def _make_layer(self, block, num_residual_blocks, out_channels, stride):
+        # stride is 2 except for conv2_x (it is 1)
+        identity_downsample = None
+        layers = []
 
-# stride is 2 except for conv2_x (it is 1)
-def _make_layer(self, block, num_residual_blocks, out_channels, stride):
-    identity_downsample = None
-    layers = []
+        if stride != 1 or self.in_channels != out_channels * 4:
+            identity_downsample = nn.Sequential(
+                nn.Conv2d(self.in_channels, out_channels *
+                          4, kernel_size=1, stride=stride),
+                nn.BatchNorm2d(out_channels*4))
 
-    if stride != 1 or self.in_channels != out_channels * 4:
-        identity_downsample = nn.Sequential(
-            nn.Conv2d(self.in_channels, out_channels *
-                      4, kernel_size=1, stride=stride),
-            nn.BatchNorm2d(out_channels*4))
+        layers.append(block(self.in_channels, out_channels,
+                            identity_downsample, stride))
+        self.in_channels = out_channels*4
 
-    layers.append(block(self.in_channels, out_channels,
-                  identity_downsample, stride))
-    self.in_channels = out_channels*4
+        for i in range(num_residual_blocks - 1):
+            # 256 -> 64, 64*4 (256) again. Input 256, map it to 256 again going through intermediate conv layers (256->64->256)
+            # We won't use identity_downsample in this case.
+            # identity_downsample is only used for the first block!
+            layers.append(block(self.in_channels, out_channels))
 
-    for i in range(num_residual_blocks - 1):
-        # 256 -> 64, 64*4 (256) again. Input 256, map it to 256 again going through intermediate conv layers (256->64->256)
-        # We won't use identity_downsample in this case.
-        # identity_downsample is only used for the first block!
-        layers.append(block(self.in_channels, out_channels))
-
-    return nn.Sequential(*layers)
+        return nn.Sequential(*layers)
 
 
 def ResNet50(img_channels=3, num_classes=1000):
@@ -121,3 +120,14 @@ def ResNet101(img_channels=3, num_classes=1000):
 
 def ResNet152(img_channels=3, num_classes=1000):
     return ResNet(block, [3, 8, 36, 3], img_channels, num_classes)
+
+
+def test():
+    net = ResNet50()
+    x = torch.randn(16, 3, 244, 244)
+    # y = net(x).to('cuda')
+    y = net(x)
+    print(y.shape)
+
+
+print(test())
