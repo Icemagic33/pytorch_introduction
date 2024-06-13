@@ -8,3 +8,16 @@ import torch.nn as nn
 # conv(7x7/2) -> max pool(3x3/2) -> conv(3x3/1) -> max pool(3x3/2) -> inception(3a) -> inception(3b) -> max pool(3x3/2) -> inception(4a) -> inception(4b) -> inception(4c) -> inception(4d) -> inception(4e) -> max pool(3x3/2) -> inception(5a) -> inception(5b) -> avg pool(7x7/1) -> dropout(40%) -> linear -> softmax
 # Check Table 1 for more details including output size
 # Auxiliary classifiers are used only during training
+
+
+class conv_block(nn.Module):
+    def __init__(self, in_channels, out_channels, **kwargs):     # key word arguments
+        super(conv_block, self).__init__()
+        self.relu = nn.ReLU()
+        # kernel_size = (1,1), (3,3), (5,5)
+        self.conv = nn.Conv2d(in_channels, out_channels, **kwargs)
+        # not in the paper (wasn't invented yet), but increases performance
+        self.batchnorm = nn.BatchNorm2d(out_channels)
+
+    def forward(self, x):
+        return self.relu(self.batchnorm(self.conv(x)))
