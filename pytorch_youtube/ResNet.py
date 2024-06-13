@@ -29,6 +29,22 @@ class resnet_layers(nn.Module):
             nn.Conv2d(in_channels=56, out_channels=56,
                       kernel_size=(1, 1), stride=1, padding=1),
         )
+        self.conv4_x = nn.Sequential(
+            nn.Conv2d(in_channels=112, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+            nn.Conv2d(in_channels=56, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+            nn.Conv2d(in_channels=56, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+        )
+        self.conv5_x = nn.Sequential(
+            nn.Conv2d(in_channels=112, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+            nn.Conv2d(in_channels=56, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+            nn.Conv2d(in_channels=56, out_channels=56,
+                      kernel_size=(1, 1), stride=1, padding=1),
+        )
 
     def forward(self, x):
         return self.relu(self.batchnorm(self.conv(x)))
