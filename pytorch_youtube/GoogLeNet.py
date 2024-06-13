@@ -42,6 +42,30 @@ class GoogLeNet(nn.Module):
         self.dropout = nn.Dropout(p=0.4)
         self.fc1 = nn.Linear(1024, 1000)
 
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.maxpool1(x)
+        x = self.conv2(x)
+        x = self.maxpool2(x)
+
+        x = self.inception3a(x)
+        x = self.inception3b(x)
+        x = self.maxpool3(x)
+
+        x = self.inception4a(x)
+        x = self.inception4b(x)
+        x = self.inception4c(x)
+        x = self.inception4d(x)
+        x = self.inception4e(x)
+        x = self.maxpool4(x)
+
+        x = self.inception5a(x)
+        x = self.inception5b(x)
+        x = self.avgpool(x)
+        x = self.dropout(x)
+        x = self.fc1(x)
+        return x
+
 
 class Inception_block(nn.Module):
     def __init__(self, in_channels, out_1x1, red_3x3, out_3x3, red_5x5, out_5x5, out_1x1pool):
