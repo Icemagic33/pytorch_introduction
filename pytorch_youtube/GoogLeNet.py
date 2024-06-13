@@ -10,6 +10,19 @@ import torch.nn as nn
 # Auxiliary classifiers are used only during training
 
 
+class GoogLenet(nn.Module):
+    def __init__(self, in_channels=3, num_classes=1000):
+        super(GoogLenet, self).__init__()
+        self.conv1 = conv_block(in_channels=in_channels, out_channels=64, kernel_size=(
+            7, 7), stride=(2, 2), padding=(3, 3))
+        self.maxpool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.conv2 = conv_block(64, 192, kernel_size=3,
+                                stride=1, padding=1)  # more compactly
+        self.maxpool2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        # In this order: in_channels, out_1x1, red_3x3, out_3x3, red_5x5, out_5x5, out_1x1pool
+
+
 class Inception_block(nn.Module):
     def __init__(self, in_channels, out_1x1, red_3x3, out_3x3, red_5x5, out_5x5, out_1x1pool):
         super(Inception_block, self).__init__()
