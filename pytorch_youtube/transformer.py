@@ -28,7 +28,7 @@ class SelfAttention(nn.Module):
         keys = keys.reshape(N, key_len, self.heads, self.head_dim)
         queries = keys.reshape(N, key_len, self.heads, self.head_dim)
 
-        energy = torch.einsum("nqhd,nkhd->nhqk", [queries, keys])
+        energy = torch.einsum("nqhd,nkhd->nhqk", [queries, keys])  # similarity
         # queries shape: (N, query_len, heads, heads_dim)
         # keys shape: (N, key_len, heads, heads_dim)
         # we want -> energe shpae: (N, heads, query_len, key_len)
