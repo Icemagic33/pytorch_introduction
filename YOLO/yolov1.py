@@ -31,6 +31,7 @@ architecture_config = [
 ]
 
 
+# Note: Reduced dimensions compared to the paper for faster training
 class CNNBlock(nn.Module):
     def __init__(self, in_channels, out_channels, **kwargs):
         super(CNNBlock, self).__init__()
@@ -47,8 +48,8 @@ class Yolov1(nn.Module):
     def __init__(self, in_channels=3, **kwargs):  # default 3 for RGB image
         super(Yolov1, self).__init__()
         self.architecture = architecture_config
-        self.in_channels = in_channels,
-        self.darkent = self._create_conv_layers(self.architecture)
+        self.in_channels = in_channels
+        self.darknet = self._create_conv_layers(self.architecture)
         self.fcs = self._create_fcs(**kwargs)
 
     def forward(self, x):
@@ -79,7 +80,7 @@ class Yolov1(nn.Module):
                         CNNBlock(
                             in_channels,
                             conv1[1],
-                            kernel_size=conv[1],
+                            kernel_size=conv1[1],
                             stride=conv1[2],
                             padding=conv1[3]
                         )
@@ -98,3 +99,22 @@ class Yolov1(nn.Module):
                     in_channels = conv2[1]
 
         return nn.Sequential(*layers)
+
+    def _create_fcs(self, split_size, num_boxes, num_classes):
+        S, B, C = split_size, num_boxes, num_classes
+        return nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(1024 * S * S, 496),  # Original paper this should be 4096
+            nn.Dropout(0.0),
+            nn.LeakyReLU(0, 1),
+            nn.Linear(496, S * S * (C + B * 5)),  # Reshaped to be (S, S, 30)
+        )
+
+
+def test(S=7, B=2, C=20):
+    model = Yolov1(split_size=S, num_boxes=B, num_classes=C)
+    x = torch.randn((2, 228, 228, 3))
+    print(model(x).shape)
+
+
+test()
