@@ -70,6 +70,31 @@ class Yolov1(nn.Module):
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
 
             elif type(x) == list:
-                conv1 = x[0]
-                conv2 = x[1]
-                num_reapeats = x[2]
+                conv1 = x[0]  # Tuple
+                conv2 = x[1]  # Tuple
+                num_repeats = x[2]  # Integer
+
+                for _ in range(num_repeats):
+                    layers += [
+                        CNNBlock(
+                            in_channels,
+                            conv1[1],
+                            kernel_size=conv[1],
+                            stride=conv1[2],
+                            padding=conv1[3]
+                        )
+                    ]
+                    layers += [
+                        CNNBlock(
+                            in_channels=conv1[1],
+                            out_channels=conv2[1],
+                            kernel_size=conv1[0],
+                            stride=conv1[2],
+                            padding=conv2[3]
+
+
+                        )]
+
+                    in_channels = conv2[1]
+
+        return nn.Sequential(*layers)
