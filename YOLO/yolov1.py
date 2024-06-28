@@ -44,4 +44,32 @@ class CNNBlock(nn.Module):
 
 
 class Yolov1(nn.Module):
-    def __init__(self, in_channels=3, **kwargs)  # default 3 for RGB image
+    def __init__(self, in_channels=3, **kwargs):  # default 3 for RGB image
+        super(Yolov1, self).__init__()
+        self.architecture = architecture_config
+        self.in_channels = in_channels,
+        self.darkent = self._create_conv_layers(self.architecture)
+        self.fcs = self._create_fcs(**kwargs)
+
+    def forward(self, x):
+        x = self.darknet(x)
+        return self.fcs(torch.flatten(x, start_dim=1))
+
+    def _create_conv_layers(self, architecture):
+        layers = []
+        in_channels = self.in_channels
+
+        for x in architecture:
+            if type(x) == tuple:
+                layers += [
+                    CNNBlock(
+                        in_channels, out_channels=x[1], kernel_size=x[0], stride=x[2], padding=x[3],
+                    )
+                ]
+            elif type(x) == str:
+                layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+
+            elif type(x) == list:
+                conv1 = x[0]
+                conv2 = x[1]
+                num_reapeats = x[2]
