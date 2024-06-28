@@ -67,6 +67,9 @@ class Yolov1(nn.Module):
                         in_channels, out_channels=x[1], kernel_size=x[0], stride=x[2], padding=x[3],
                     )
                 ]
+
+                in_channels = x[1]
+
             elif type(x) == str:
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
 
@@ -113,7 +116,7 @@ class Yolov1(nn.Module):
 
 def test(S=7, B=2, C=20):
     model = Yolov1(split_size=S, num_boxes=B, num_classes=C)
-    x = torch.randn((2, 228, 228, 3))
+    x = torch.randn((2, 3, 448, 448))
     print(model(x).shape)
 
 
