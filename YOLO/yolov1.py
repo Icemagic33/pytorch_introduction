@@ -9,6 +9,10 @@ import torch.nn as nn
 class YOLO(nn.Module):
     def __init__(self, in_channels, out_channels, identity_downsample=None, stride=1):
         super(YOLO, self).__init__()
-        self.first = nn.Sequential{
-            nn.Conv2d(in_channels=, out_channels=, kernel_size=, strid=, padding=)
+        self.layer1 = nn.Sequential{
+            nn.Conv2d(in_channels=, out_channels=, kernel_size=(7, 7), stride=, padding=)
+
         }
+
+    def forward(self, x):
+        x = nn.ReLU(x.first)
