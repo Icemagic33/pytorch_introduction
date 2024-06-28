@@ -19,3 +19,40 @@ class SelfAttention(nn.Module):
 
     def forward(self, values, keys, query, mask):
         N = query.shape[0]
+        value_len, key_len, query_len = values.shape[1], keys.shape[1], query.shape[1]
+
+        # split embedding into self.heads pieces
+        values = values.reshape(N, value_len, self.heads, self.head_dim)
+        keys = keys.reshape(N, key_len, self.heads, self.head_dim)
+        queries = query.reshape(N, query_len, self.heads, self.head_dim)
+
+        # Einsum does matrix mult. for query*keys for each training example
+        # with every other training example, don't be confused by einsum
+        # it's just how I like doing matrix multiplication & bmm
+        energy = torch.einsum("nqhd,nkhd->nhqk", [queries, keys])
+        # querires shape : (0, query_len, heads, heads_dim)
+        # keys shape : (M, key_len, heads, heads_dim)
+        # energy shape: (N, heads, query_len, key_len)
+
+        # Mask padded indices so their weights become 0
+        if mask is not None:
+            energy = energy.masked_fill(mask == 0, float("-1e20"))
+
+            # Normalize energy values similarly to seq2seq + attention
+        # so that they sum to 1. Also divide by scaling factor for better stability
+        attention = torch.softmax(energy / (self.embed_size ** (1/2)), dim=3)
+        # attentino shape: (N, heads, query_len, key_len)
+
+        out = torch.einsum(
+            "nhql,nlhd->nqhd", [attention, values]).reshape(N, query_len, self.heads*self.head_dim)
+
+        # attention shape: (N, heads, query_len, key_len)
+        # values shape: (N, value_len, heads, heads_dim)
+        # out after matrix multiply: (N, query_len, heads, head_dim), then
+        # we reshape and flatten the last two dimensions.
+
+        out = self.fc_out(out)
+        # Linear layer doesn't modify the shape, final shape will be
+        # (N, query_len, embed_size)
+
+        return out
