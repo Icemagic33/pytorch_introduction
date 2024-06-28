@@ -4,3 +4,11 @@
 # w, h can be greater than 1 if the object is wider or taller than the cell
 import torch
 import torch.nn as nn
+
+
+class YOLO(nn.Module):
+    def __init__(self, in_channels, out_channels, identity_downsample=None, stride=1):
+        super(YOLO, self).__init__()
+        self.first = nn.Sequential{
+            nn.Conv2d(in_channels=, out_channels=, kernel_size=, strid=, padding=)
+        }
