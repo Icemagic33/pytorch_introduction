@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
+from torch.utils.data import DataLoader
+from data_vis import SpineDataset, im_list_dcm
 
 # Set a larger image size
 image_size = (256, 256)  # Example: 256x256
@@ -66,9 +69,50 @@ input_tensor = torch.randn(
 # New shape: (batch_size * num_images_per_study, channels, height, width)
 input_tensor = input_tensor.view(-1, 1, *image_size)
 
-# Forward pass through the model
-outputs = model(input_tensor)
+# Batch size, image size, num_images_per_study
+batch_size = 32
+image_size = (256, 256)
+num_images_per_study = 150
 
-# Each output corresponds to the predictions for a specific condition-level combination
-for i, output in enumerate(outputs):
-    print(f"Output for head {i}: {output.shape}")
+# Create the dataset and dataloader
+train_dataset = SpineDataset(im_list_dcm)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+# Define the loss function and optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop
+num_epochs = 10  # Set the number of epochs
+model.train()  # Set the model to training mode
+
+for epoch in range(num_epochs):
+    running_loss = 0.0
+    for inputs, labels in train_loader:
+        # Reshape the input tensor to match the expected input shape for the model
+        inputs = inputs.view(-1, 1, *image_size)
+
+        # Zero the parameter gradients
+        optimizer.zero_grad()
+
+        # Forward pass
+        outputs = model(inputs)
+
+        # Compute the loss for each head and sum them
+        loss = 0
+        for i in range(25):
+            loss += criterion(outputs[i], labels[:, i])
+
+        # Backward pass
+        loss.backward()
+
+        # Update the model parameters
+        optimizer.step()
+
+        # Print statistics
+        running_loss += loss.item()
+
+    print(
+        f'Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader)}')
+
+print('Finished Training')
