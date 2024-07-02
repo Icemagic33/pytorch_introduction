@@ -237,10 +237,14 @@ condition_mapping = {
     'Moderate': 1,
     'Severe': 2
 }
+
+# Set image size
+image_size = (256, 256)
+
 # Transform to preprocess images
 transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Resize((128, 128)),
+    transforms.Resize(image_size),
     transforms.Normalize((0.5,), (0.5,))
 ])
 
