@@ -107,8 +107,10 @@ im_list_dcm = {
     ...
 }
 """
+
 # Initialize the dictionary to hold the DICOM images and series descriptions
 im_list_dcm = {}
+
 # Iterate over each SeriesInstanceUID in the patient's study
 for idx, i in enumerate(ptobj['SeriesInstanceUIDs']):
     # Initialize the dictionary for each series with an empty list for images and the series description
@@ -125,3 +127,39 @@ for idx, i in enumerate(ptobj['SeriesInstanceUIDs']):
         im_list_dcm[i]['images'].append({
             'SOPInstanceUID': j.split('/')[-1].replace('.dcm', ''),
             'dicom': pydicom.dcmread(j)})
+
+
+# Function to display images
+def display_images(images, title, max_images_per_row=4):
+    # Calculate the number of rows needed
+    num_images = len(images)
+    num_rows = (num_images + max_images_per_row -
+                1) // max_images_per_row  # Ceiling division
+
+    # Handle the case when num_rows is 0
+    if num_rows == 0:
+        num_rows = 1  # Set at least one row to display images
+
+    # Create a subplot grid
+    fig, axes = plt.subplots(
+        num_rows, max_images_per_row, figsize=(5, 1.5 * num_rows))
+
+    # Flatten axes array for easier looping if there are multiple rows
+    if num_rows > 1:
+        axes = axes.flatten()
+    else:
+        axes = [axes]  # Make it iterable for consistency
+
+    # Plot each image
+    for idx, image in enumerate(images):
+        ax = axes[idx]
+        # Assuming grayscale for simplicity, change cmap as needed
+        ax.imshow(image, cmap='gray')
+        ax.axis('off')  # Hide axes
+
+    # Turn off unused subplots
+    for idx in range(num_images, len(axes)):
+        axes[idx].axis('off')
+    fig.suptitle(title, fontsize=16)
+
+    plt.tight_layout()
