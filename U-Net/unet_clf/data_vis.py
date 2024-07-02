@@ -175,3 +175,11 @@ def load_dicom_images_from_dir(directory):
 directory = f'{fd}/train_images/4003253/702807833/'
 images = load_dicom_images_from_dir(directory)
 display_images(images, title="Sample DICOM Images")
+
+
+# Load the CSV files containing training data and label coordinates
+train_df = pd.read_csv(f'{fd}/train.csv')
+train_coords_df = pd.read_csv(f'{fd}/train_label_coordinates.csv')
+
+# Display the first few rows of the training data DataFrame to verify the data
+print(train_df.head())
