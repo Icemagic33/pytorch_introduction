@@ -331,3 +331,54 @@ for study_id, data in im_list_dcm.items():
 
 # Save the processed data for later use
 torch.save(im_list_dcm, 'processed_data.pt')
+
+
+# Handle and serve spinal imaging data and their labels for training machine learning models.
+class SpineDataset(Dataset):
+    def __init__(self, im_list_dcm):  # Initializes the dataset object
+        self.im_list_dcm = im_list_dcm
+        self.study_ids = list(im_list_dcm.keys())
+
+    def __len__(self):  # Returns the number of studies in the dataset
+        return len(self.study_ids)
+
+    def __getitem__(self, idx):
+        # Get the study ID for the given index
+        study_id = self.study_ids[idx]
+        # Retrieve the data for this study from the im_list_dcm dictionary
+        data = self.im_list_dcm[study_id]
+
+        # Initialize a list to hold images from all series for this study
+        series_images = []
+        # Iterate over each series in this study and collect the preprocessed images
+        for series_id, images in data['series'].items():
+            series_images.append(images)
+
+        # Check if there are any images collected, raise an error if none found
+        if len(series_images) == 0:
+            raise RuntimeError(
+                f"No valid images found for study ID {study_id}")
+
+        # Concatenate all series images into one tensor along the first dimension
+        all_images = torch.cat(series_images, dim=0)
+
+        # Convert the labels to a tensor
+        labels = torch.tensor(data['labels'], dtype=torch.long)
+
+        # Return the combined images and labels as a tuple
+        return all_images, labels
+
+
+# ------------------------------DEBUGGING-------------------------------------------
+# Example usage:
+# Assuming im_list_dcm is already created from the previous steps
+dataset = SpineDataset(im_list_dcm)
+dataloader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=True)
+
+# Print a batch of data to verify
+for batch in dataloader:
+    images, labels = batch
+    print(f"Images batch shape: {images.shape}")
+    print(f"Labels batch shape: {labels.shape}")
+    break
+# ------------------------------DEBUGGING-------------------------------------------
