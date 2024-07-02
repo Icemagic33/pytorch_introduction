@@ -245,15 +245,34 @@ transform = transforms.Compose([
 ])
 
 
-# Load and preprocess images
-def load_dicom_image(file_path):
-    dicom = pydicom.dcmread(file_path)
-    pixel_array = dicom.pixel_array
-    # Convert pixel array to float
-    pixel_array = pixel_array.astype(np.float32)
-    return pixel_array
+# Convert labels to numerical format
+condition_mapping = {
+    'Normal/Mild': 0,
+    'Moderate': 1,
+    'Severe': 2
+}
+
+# Transform to preprocess images
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Resize((128, 128)),
+    transforms.Normalize((0.5,), (0.5,))
+])
 
 
+# Function to load DICOM images from a given directory
+def load_dicom_images_from_dir(directory):
+    dicom_images = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.dcm'):
+                dicom_path = os.path.join(root, file)
+                dicom = pydicom.dcmread(dicom_path)
+                dicom_images.append(dicom.pixel_array)
+    return dicom_images
+
+
+# Preprocess images
 def preprocess_images(images, max_length=176):
     processed_images = [transform(image) for image in images]
     if len(processed_images) < max_length:
@@ -265,3 +284,12 @@ def preprocess_images(images, max_length=176):
         # Truncate if more than max_length
         processed_images = processed_images[:max_length]
     return torch.stack(processed_images)
+
+
+# Function to get labels for a patient
+def get_labels(patient_row):
+    labels = []
+    for col in patient_row.index:
+        if col != 'study_id':
+            labels.append(condition_mapping[patient_row[col]])
+    return labels
