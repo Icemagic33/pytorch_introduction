@@ -183,3 +183,5 @@ train_coords_df = pd.read_csv(f'{fd}/train_label_coordinates.csv')
 
 # Display the first few rows of the training data DataFrame to verify the data
 print(train_df.head())
+# Display the first few rows of the train_coords_df DataFrame to verify the data
+print(train_coords_df.head(20))
