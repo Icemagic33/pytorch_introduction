@@ -169,3 +169,9 @@ def load_dicom_images_from_dir(directory):
                 dicom = pydicom.dcmread(dicom_path)
                 dicom_images.append(dicom.pixel_array)
     return dicom_images
+
+
+# Display
+directory = f'{fd}/train_images/4003253/702807833/'
+images = load_dicom_images_from_dir(directory)
+display_images(images, title="Sample DICOM Images")
