@@ -48,9 +48,36 @@ for idx, d in enumerate(['foraminal', 'subarticular', 'canal']):
 part_1 = os.listdir(f'{fd}/train_images')
 # Filter out any system files that might be present (e.g., '.DS_Store')
 part_1 = list(filter(lambda x: x.find('.DS') == -1, part_1))
+
 # Load metadata from the CSV file
 df_meta_f = pd.read_csv(f'{fd}/train_series_descriptions.csv')
+
 # Create a list of tuples containing study IDs and their corresponding folder paths
 p1 = [(x, f"{fd}/train_images/{x}") for x in part_1]
+
 # Initialize a dictionary to hold metadata for each study
 meta_obj = {p[0]: {'folder_path': p[1], 'SeriesInstanceUIDs': []} for p in p1}
+
+# Iterate over each study in the meta_obj dictionary
+for m in meta_obj:
+    # List all directories (series) within the study folder, filtering out system files
+    meta_obj[m]['SeriesInstanceUIDs'] = list(
+        filter(lambda x: x.find('.DS') == -1,
+               os.listdir(meta_obj[m]['folder_path'])
+               )
+    )
+
+# Iterate over each study in the meta_obj dictionary using tqdm for progress bar
+for k in tqdm(meta_obj):
+    for s in meta_obj[k]['SeriesInstanceUIDs']:
+        # Initialize the 'SeriesDescriptions' list if not already present
+        if 'SeriesDescriptions' not in meta_obj[k]:
+            meta_obj[k]['SeriesDescriptions'] = []
+        try:
+            # Append the series description to the 'SeriesDescriptions' list
+            meta_obj[k]['SeriesDescriptions'].append(
+                df_meta_f[(df_meta_f['study_id'] == int(k)) &
+                          (df_meta_f['series_id'] == int(s))]['series_description'].iloc[0])
+        except:
+            # Print an error message if the series description cannot be found
+            print("Failed on", s, k)
