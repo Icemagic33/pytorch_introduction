@@ -136,19 +136,12 @@ def display_images(images, title, max_images_per_row=4):
     num_rows = (num_images + max_images_per_row -
                 1) // max_images_per_row  # Ceiling division
 
-    # Handle the case when num_rows is 0
-    if num_rows == 0:
-        num_rows = 1  # Set at least one row to display images
-
     # Create a subplot grid
-    fig, axes = plt.subplots(
-        num_rows, max_images_per_row, figsize=(5, 1.5 * num_rows))
+    fig, axes = plt.subplots(num_rows, max_images_per_row, figsize=(
+        5 * max_images_per_row, 5 * num_rows))
 
     # Flatten axes array for easier looping if there are multiple rows
-    if num_rows > 1:
-        axes = axes.flatten()
-    else:
-        axes = [axes]  # Make it iterable for consistency
+    axes = axes.flatten()
 
     # Plot each image
     for idx, image in enumerate(images):
@@ -163,3 +156,16 @@ def display_images(images, title, max_images_per_row=4):
     fig.suptitle(title, fontsize=16)
 
     plt.tight_layout()
+    plt.show()
+
+
+# Function to load DICOM images from a given directory
+def load_dicom_images_from_dir(directory):
+    dicom_images = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.dcm'):
+                dicom_path = os.path.join(root, file)
+                dicom = pydicom.dcmread(dicom_path)
+                dicom_images.append(dicom.pixel_array)
+    return dicom_images
