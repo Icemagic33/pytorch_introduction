@@ -333,7 +333,7 @@ for study_id, data in im_list_dcm.items():
 torch.save(im_list_dcm, 'processed_data.pt')
 
 
-# Handle and serve spinal imaging data and their labels for training machine learning models.
+# SpineDataset class for loading, preprocessing, and serving batches of spinal imaging data with corresponding labels.
 class SpineDataset(Dataset):
     def __init__(self, im_list_dcm):  # Initializes the dataset object
         self.im_list_dcm = im_list_dcm
