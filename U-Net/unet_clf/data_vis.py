@@ -43,3 +43,14 @@ for idx, d in enumerate(['foraminal', 'subarticular', 'canal']):
     # plot the value counts as a stacked bar chart on the corresponding subplot
     value_counts.plot(kind='bar', stacked=True, ax=axis[idx])
     axis[idx].set_title(f'{d} distribution')
+
+# List out all of the Studies we have on patients.
+part_1 = os.listdir(f'{fd}/train_images')
+# Filter out any system files that might be present (e.g., '.DS_Store')
+part_1 = list(filter(lambda x: x.find('.DS') == -1, part_1))
+# Load metadata from the CSV file
+df_meta_f = pd.read_csv(f'{fd}/train_series_descriptions.csv')
+# Create a list of tuples containing study IDs and their corresponding folder paths
+p1 = [(x, f"{fd}/train_images/{x}") for x in part_1]
+# Initialize a dictionary to hold metadata for each study
+meta_obj = {p[0]: {'folder_path': p[1], 'SeriesInstanceUIDs': []} for p in p1}
