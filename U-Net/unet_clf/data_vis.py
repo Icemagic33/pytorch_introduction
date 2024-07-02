@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision.transforms import functional as TF
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as transforms
 import pandas as pd
 import matplotlib.pyplot as plt
 import cv2
@@ -226,3 +229,39 @@ longest_length = max(series_lengths)
 # Print the results (debugging)
 print(f'Shortest number of images in a series: {shortest_length}')
 print(f'Longest number of images in a series: {longest_length}')
+
+
+# Convert labels to numerical format
+condition_mapping = {
+    'Normal/Mild': 0,
+    'Moderate': 1,
+    'Severe': 2
+}
+# Transform to preprocess images
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Resize((128, 128)),
+    transforms.Normalize((0.5,), (0.5,))
+])
+
+
+# Load and preprocess images
+def load_dicom_image(file_path):
+    dicom = pydicom.dcmread(file_path)
+    pixel_array = dicom.pixel_array
+    # Convert pixel array to float
+    pixel_array = pixel_array.astype(np.float32)
+    return pixel_array
+
+
+def preprocess_images(images, max_length=176):
+    processed_images = [transform(image) for image in images]
+    if len(processed_images) < max_length:
+        # Pad with zeros if less than max_length
+        padding = [torch.zeros_like(processed_images[0])
+                   for _ in range(max_length - len(processed_images))]
+        processed_images.extend(padding)
+    elif len(processed_images) > max_length:
+        # Truncate if more than max_length
+        processed_images = processed_images[:max_length]
+    return torch.stack(processed_images)
