@@ -223,5 +223,6 @@ series_lengths = get_series_lengths(base_dir, train_df, train_coords_df)
 shortest_length = min(series_lengths)
 longest_length = max(series_lengths)
 
+# Print the results (debugging)
 print(f'Shortest number of images in a series: {shortest_length}')
 print(f'Longest number of images in a series: {longest_length}')
