@@ -369,14 +369,14 @@ class SpineDataset(Dataset):
         return all_images, labels
 
 
-# ------------------------------DEBUGGING-------------------------------------------
-# Example usage:
-# Assuming im_list_dcm is already created from the previous steps
-dataset = SpineDataset(im_list_dcm)
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=True)
+# Create dataset and dataloader
+im_list_dcm = torch.load('processed_data.pt')  # Load preprocessed data
+train_dataset = SpineDataset(im_list_dcm)
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 
+# ------------------------------DEBUGGING-------------------------------------------
 # Print a batch of data to verify
-for batch in dataloader:
+for batch in train_loader:
     images, labels = batch
     print(f"Images batch shape: {images.shape}")
     print(f"Labels batch shape: {labels.shape}")
