@@ -293,3 +293,41 @@ def get_labels(patient_row):
         if col != 'study_id':
             labels.append(condition_mapping[patient_row[col]])
     return labels
+
+
+# Load, preprocess, and structure the data correctly for further analysis or training
+
+# Create a dictionary to hold images and labels for each study
+im_list_dcm = {}
+
+for idx, row in train_df.iterrows():
+    study_id = row['study_id']
+    patient_labels = get_labels(row)
+
+    # Find all series for this study in the coords DataFrame
+    series_ids = train_coords_df[train_coords_df['study_id']
+                                 == study_id]['series_id'].unique()
+
+    im_list_dcm[study_id] = {'images': [],
+                             'labels': patient_labels, 'series': {}}
+
+    for series_id in series_ids:
+        series_dir = os.path.join(base_dir, str(study_id), str(series_id))
+        images = load_dicom_images_from_dir(series_dir)
+
+        # Only preprocess and add if there are images
+        if images:
+            preprocessed_images = preprocess_images(images)
+            im_list_dcm[study_id]['series'][series_id] = preprocessed_images
+
+# ------------------------------DEBUGGING-------------------------------------------
+# Print a summary
+for study_id, data in im_list_dcm.items():
+    print(f"Study ID: {study_id}")
+    print(f"Labels: {data['labels']}")
+    for series_id, images in data['series'].items():
+        print(f"  Series ID: {series_id}, Number of images: {len(images)}")
+# ------------------------------DEBUGGING-------------------------------------------
+
+# Save the processed data for later use
+torch.save(im_list_dcm, 'processed_data.pt')
