@@ -81,3 +81,47 @@ for k in tqdm(meta_obj):
         except:
             # Print an error message if the series description cannot be found
             print("Failed on", s, k)
+
+# Access, retrieve, and display the metadata for the second study
+print(meta_obj[list(meta_obj.keys())[1]])
+
+# Retrieve data for the second patient in the train DataFrame
+patient = train.iloc[1]
+
+# Retrieve the metadata for the study ID associated with the second patient in the train DataFrame from the meta_obj dictionary
+ptobj = meta_obj[str(patient['study_id'])]
+print(ptobj)
+
+# Get data into the format
+"""
+im_list_dcm = {
+    '{SeriesInstanceUID}': {
+        'images': [
+            {'SOPInstanceUID': ...,
+             'dicom': PyDicom object
+            },
+            ...,
+        ],
+        'description': # SeriesDescription
+    },
+    ...
+}
+"""
+# Initialize the dictionary to hold the DICOM images and series descriptions
+im_list_dcm = {}
+# Iterate over each SeriesInstanceUID in the patient's study
+for idx, i in enumerate(ptobj['SeriesInstanceUIDs']):
+    # Initialize the dictionary for each series with an empty list for images and the series description
+    im_list_dcm[i] = {'images': [],
+                      'description': ptobj['SeriesDescriptions'][idx]}
+
+    # Get the list of all DICOM files in the current series directory
+    images = glob.glob(
+        f"{ptobj['folder_path']}/{ptobj['SeriesInstanceUIDs'][idx]}/*.dcm")
+
+    # Iterate over the sorted list of DICOM files
+    for j in sorted(images, key=lambda x: int(x.split('/')[-1].replace('.dcm', ''))):
+        # Append the SOPInstanceUID and the PyDicom object to the list of images for the current series
+        im_list_dcm[i]['images'].append({
+            'SOPInstanceUID': j.split('/')[-1].replace('.dcm', ''),
+            'dicom': pydicom.dcmread(j)})
