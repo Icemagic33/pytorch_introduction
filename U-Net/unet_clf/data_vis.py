@@ -177,6 +177,9 @@ images = load_dicom_images_from_dir(directory)
 display_images(images, title="Sample DICOM Images")
 
 
+# Base directory for images
+base_dir = f'{fd}/train_images/'
+
 # Load the CSV files containing training data and label coordinates
 train_df = pd.read_csv(f'{fd}/train.csv')
 train_coords_df = pd.read_csv(f'{fd}/train_label_coordinates.csv')
@@ -185,3 +188,40 @@ train_coords_df = pd.read_csv(f'{fd}/train_label_coordinates.csv')
 print(train_df.head())
 # Display the first few rows of the train_coords_df DataFrame to verify the data
 print(train_coords_df.head(20))
+
+
+# Function to get the lengths of series (number of images in each series)
+def get_series_lengths(base_dir, train_df, coords_df):
+    lengths = []
+
+    # Iterate over each study in train_df
+    for idx in range(len(train_df)):
+        study_id = train_df.iloc[idx]['study_id']
+
+        # Ensure the study_id exists in coords_df
+        if study_id in coords_df['study_id'].values:
+            # Get the corresponding series_id and series directory
+            series_id = coords_df[coords_df['study_id']
+                                  == study_id].iloc[0]['series_id']
+            series_dir = os.path.join(base_dir, str(study_id), str(series_id))
+            # Count the number of DICOM images in the series directory
+            num_images = len([name for name in os.listdir(
+                series_dir) if name.endswith('.dcm')])
+            # Append the count to the lengths list
+            lengths.append(num_images)
+        else:
+            # Print a warning message if study_id is not found in coords_df
+            print(f"Study ID {study_id} not found in coords_df")
+
+    return lengths
+
+
+# Calculate series lengths
+series_lengths = get_series_lengths(base_dir, train_df, train_coords_df)
+
+# Find the shortest and longest series
+shortest_length = min(series_lengths)
+longest_length = max(series_lengths)
+
+print(f'Shortest number of images in a series: {shortest_length}')
+print(f'Longest number of images in a series: {longest_length}')
